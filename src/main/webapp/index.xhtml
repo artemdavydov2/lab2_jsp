@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<head>
+    <title>MVC: arctan(x) і табулювання ln(x-1)/(4-x)</title>
+</head>
+<body>
+<h2>Завдання 2.1 — Ряд для arctan(x)</h2>
+<form action="#{request.contextPath}/calc" method="post">
+    <input type="hidden" name="action" value="series"/>
+    <div>
+        <label for="x">x:</label>
+        <input type="text" id="x" name="x" value="#{empty requestScope.x ? '' : requestScope.x}"/>
+        <label for="n">n:</label>
+        <input type="text" id="n" name="n" value="#{empty requestScope.n ? '' : requestScope.n}"/>
+        <label for="e1">e1:</label>
+        <input type="text" id="e1" name="e1" value="#{empty requestScope.e1 ? '' : requestScope.e1}"/>
+        <label for="e2">e2:</label>
+        <input type="text" id="e2" name="e2" value="#{empty requestScope.e2 ? '' : requestScope.e2}"/>
+        <button type="submit">Обчислити</button>
+    </div>
+
+    <ui:fragment rendered="#{not empty requestScope.seriesError}">
+        <div>#{requestScope.seriesError}</div>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{not empty requestScope.seriesExact}">
+        <div>
+            <p>
+                Сума перших n доданків: <strong>#{requestScope.seriesSumN}</strong><br/>
+                Точне значення atan(x): <strong>#{requestScope.seriesExact}</strong><br/>
+                Різниця |Sn - atan(x)|: <strong>#{requestScope.seriesDiffN}</strong>
+            </p>
+            <p>
+                Сума доданків з |term| &gt; e1: <strong>#{requestScope.seriesResultE1.sum}</strong>,
+                кількість: <strong>#{requestScope.seriesResultE1.count}</strong><br/>
+                Сума доданків з |term| &gt; e2: <strong>#{requestScope.seriesResultE2.sum}</strong>,
+                кількість: <strong>#{requestScope.seriesResultE2.count}</strong>
+            </p>
+        </div>
+    </ui:fragment>
+</form>
+
+<hr/>
+
+<h2>Завдання 2.2 — Табулювання y = ln(x - 1) / (4 - x)</h2>
+<form action="#{request.contextPath}/calc" method="post">
+    <input type="hidden" name="action" value="tabulate"/>
+    <div>
+        <label for="a">a:</label>
+        <input type="text" id="a" name="a" value="#{empty requestScope.a ? '' : requestScope.a}"/>
+        <label for="b">b:</label>
+        <input type="text" id="b" name="b" value="#{empty requestScope.b ? '' : requestScope.b}"/>
+        <label for="h">h:</label>
+        <input type="text" id="h" name="h" value="#{empty requestScope.h ? '' : requestScope.h}"/>
+        <button type="submit">Табулювати</button>
+    </div>
+
+    <ui:fragment rendered="#{not empty requestScope.tabError}">
+        <div>#{requestScope.tabError}</div>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{not empty requestScope.tabulated}">
+        <table>
+            <thead>
+            <tr>
+                <th>x</th>
+                <th>y = ln(x - 1) / (4 - x)</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ui:repeat value="#{requestScope.tabulated}" var="p">
+                <tr>
+                    <td>#{p.x}</td>
+                    <td>
+                        <ui:fragment rendered="#{p.valid}">#{p.y}</ui:fragment>
+                        <ui:fragment rendered="#{not p.valid}">—</ui:fragment>
+                    </td>
+                    <td>
+                        <ui:fragment rendered="#{p.valid}">OK</ui:fragment>
+                        <ui:fragment rendered="#{not p.valid}">#{p.message}</ui:fragment>
+                    </td>
+                </tr>
+            </ui:repeat>
+            </tbody>
+        </table>
+    </ui:fragment>
+</form>
+</body>
+</html>
